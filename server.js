@@ -10,6 +10,8 @@ server.use(prerender.addMetaTags());
 server.use(prerender.removeScriptTags());
 server.use(prerender.httpHeaders());
 
-server.start();
+const port = process.env.PORT || 3000;
+server.start({ port });
+
 
 
