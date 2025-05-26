@@ -26,7 +26,6 @@ server.use({
       console.log(`[CACHE] HIT: ${key}`);
       res.send(entry.html);
     } else {
-      // Interceptar el resultado renderizado
       res.send = ((originalSend) => (html) => {
         console.log(`[CACHE] STORE: ${key}`);
         cache.set(key, { html, timestamp: Date.now() });
@@ -47,7 +46,5 @@ server.use(prerender.browserForceRestart());
 server.use(prerender.addMetaTags());
 server.use(prerender.removeScriptTags());
 server.use(prerender.httpHeaders());
-const puppeteer = require('puppeteer');
-process.env.CHROME_BIN = puppeteer.executablePath();
 
 server.start();
