@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 
+// 🧠 Requiere Puppeteer y le da a Prerender la ruta del Chrome embebido
+process.env.CHROME_BIN = require('puppeteer').executablePath();
+process.env.PUPPETEER_SKIP_DOWNLOAD = 'true';
+process.env.PUPPETEER_EXECUTABLE_PATH = process.env.CHROME_BIN;
+process.env.PRERENDER_CHROME_FLAGS = '--no-sandbox --disable-setuid-sandbox';
+
 const prerender = require('./lib');
 const server = prerender();
 
-// Usar el puerto de Render o fallback
 const PORT = process.env.PORT || 10000;
 
 // --------------------
@@ -41,13 +46,6 @@ server.use({
 });
 
 // --------------------
-// Middleware para Puppeteer (Render requiere flags)
-// --------------------
-server.use(prerender.browserMiddleware({
-  chromeFlags: ['--no-sandbox', '--disable-setuid-sandbox']
-}));
-
-// --------------------
 // Otros middlewares
 // --------------------
 server.use(prerender.sendPrerenderHeader());
@@ -60,4 +58,5 @@ server.use(prerender.httpHeaders());
 // Iniciar servidor
 // --------------------
 server.start({ port: PORT, host: '0.0.0.0' });
+
 
