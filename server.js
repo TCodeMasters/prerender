@@ -1,19 +1,14 @@
 #!/usr/bin/env node
 
 const prerender = require('./lib');
-const puppeteer = require('puppeteer');
-
 const server = prerender();
 
-// Usa el puerto que Render asigna
+// Usar el puerto de Render o fallback
 const PORT = process.env.PORT || 10000;
 
-// Instancia Puppeteer con flags para Render
-server.use(prerender.browserMiddleware({
-  chromeFlags: ['--no-sandbox', '--disable-setuid-sandbox']
-}));
-
-// Middleware de caché simple en memoria
+// --------------------
+// CACHE EN MEMORIA
+// --------------------
 const cache = new Map();
 const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutos
 
@@ -45,14 +40,24 @@ server.use({
   }
 });
 
-// Middlewares nativos
+// --------------------
+// Middleware para Puppeteer (Render requiere flags)
+// --------------------
+server.use(prerender.browserMiddleware({
+  chromeFlags: ['--no-sandbox', '--disable-setuid-sandbox']
+}));
+
+// --------------------
+// Otros middlewares
+// --------------------
 server.use(prerender.sendPrerenderHeader());
 server.use(prerender.browserForceRestart());
-// server.use(prerender.blockResources());
 server.use(prerender.addMetaTags());
 server.use(prerender.removeScriptTags());
 server.use(prerender.httpHeaders());
 
-// Iniciar servidor escuchando explícitamente en el puerto
+// --------------------
+// Iniciar servidor
+// --------------------
 server.start({ port: PORT, host: '0.0.0.0' });
 
