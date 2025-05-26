@@ -2,6 +2,10 @@
 var prerender = require('./lib');
 var server = prerender();
 
+// Esto es nuevo:
+const port = process.env.PORT || 3618;
+server.start({ port });
+
 // --------------------
 // CACHE EN MEMORIA
 // --------------------
